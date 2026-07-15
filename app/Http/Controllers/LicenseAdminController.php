@@ -33,9 +33,9 @@ class LicenseAdminController extends Controller
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
             'target_domain' => 'required|string|max:255',
-            'target_ip' => 'nullable|ip',
+            'target_ip' => 'nullable|string|max:45',
             'max_routers' => 'nullable|integer|min:1',
-            'expires_at' => 'required|date|after:now',
+            'expires_at' => 'required|date|after_or_equal:today',
         ]);
 
         $maxRouters = $validated['max_routers'] ?? 5;

@@ -1,17 +1,15 @@
-version: '3.8'
-
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: netsight_central_app
+    build: .
+    container_name: netsight-central-app
+    restart: unless-stopped
     ports:
       - "127.0.0.1:8090:80"
+    env_file:
+      - .env
+    volumes:
+      - /var/run/postgresql:/var/run/postgresql
     deploy:
       resources:
         limits:
           memory: 256M
-    restart: unless-stopped
-    env_file:
-      - .env
