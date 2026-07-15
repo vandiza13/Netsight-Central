@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: netsight_central_app
+    ports:
+      - "127.0.0.1:8090:80"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    restart: unless-stopped
+    env_file:
+      - .env
