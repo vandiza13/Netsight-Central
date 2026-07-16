@@ -30,25 +30,35 @@ class LicenseAdminController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'customer_name' => 'required|string|max:255',
             'target_domain' => 'required|string|max:255',
             'target_ip' => 'nullable|string|max:45',
             'max_routers' => 'nullable|integer|min:1',
-            'expires_at' => 'required|date|after_or_equal:today',
+            'expires_at' => 'required|date',
         ]);
+
+        if ($validator->fails()) {
+            dd('VALIDATION FAILED:', $validator->errors()->all(), 'YOUR INPUT:', $request->all());
+        }
+
+        $validated = $validator->validated();
 
         $maxRouters = $validated['max_routers'] ?? 5;
 
-        $license = License::create([
-            'customer_name' => $validated['customer_name'],
-            'license_key' => LicenseGenerator::generate(),
-            'target_domain' => $validated['target_domain'],
-            'target_ip' => $validated['target_ip'] ?? null,
-            'max_routers' => $maxRouters,
-            'status' => 'active',
-            'expires_at' => Carbon::parse($validated['expires_at']),
-        ]);
+        try {
+            $license = License::create([
+                'customer_name' => $validated['customer_name'],
+                'license_key' => LicenseGenerator::generate(),
+                'target_domain' => $validated['target_domain'],
+                'target_ip' => $validated['target_ip'] ?? null,
+                'max_routers' => $maxRouters,
+                'status' => 'active',
+                'expires_at' => Carbon::parse($validated['expires_at']),
+            ]);
+        } catch (\Exception $e) {
+            dd('DATABASE ERROR:', $e->getMessage());
+        }
 
         return redirect()->route('admin.licenses.index')->with('success', "License created successfully for {$license->customer_name}!");
     }
