@@ -171,7 +171,7 @@
                         </svg>
                         Issue New License
                     </h2>
-                    <form action="{{ route('admin.licenses.store') }}" method="POST" class="space-y-4">
+                    <form action="/admin/licenses" method="POST" class="space-y-4">
                         @csrf
                         <div>
                             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Customer / ISP Name</label>
